@@ -80,6 +80,7 @@ function LoginPageClient() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileLoaded, setTurnstileLoaded] = useState(false);
   const [siteConfig, setSiteConfig] = useState<any>(null);
+  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
 
   const { siteName } = useSite();
 
@@ -155,12 +156,13 @@ function LoginPageClient() {
 
     const container = document.getElementById('turnstile-container');
     if (container && (window as any).turnstile) {
-      (window as any).turnstile.render('#turnstile-container', {
+      const widgetId = (window as any).turnstile.render('#turnstile-container', {
         sitekey: siteConfig.TurnstileSiteKey,
         callback: (token: string) => {
           setTurnstileToken(token);
         },
       });
+      setTurnstileWidgetId(widgetId);
     }
   }, [turnstileLoaded, siteConfig]);
 
@@ -201,16 +203,29 @@ function LoginPageClient() {
           // 如果不记住密码，清除已存储的信息
           localStorage.removeItem('rememberedCredentials');
         }
-        
+
         const redirect = searchParams.get('redirect') || '/';
         router.replace(redirect);
-      } else if (res.status === 401) {
-        setError('密码错误');
       } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error ?? '服务器错误');
+        // 登录失败，重置Turnstile
+        if (siteConfig?.LoginRequireTurnstile && turnstileWidgetId !== null && (window as any).turnstile) {
+          (window as any).turnstile.reset(turnstileWidgetId);
+          setTurnstileToken(null);
+        }
+
+        if (res.status === 401) {
+          setError('密码错误');
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error ?? '服务器错误');
+        }
       }
     } catch (error) {
+      // 网络错误，重置Turnstile
+      if (siteConfig?.LoginRequireTurnstile && turnstileWidgetId !== null && (window as any).turnstile) {
+        (window as any).turnstile.reset(turnstileWidgetId);
+        setTurnstileToken(null);
+      }
       setError('网络错误，请稍后重试');
     } finally {
       setLoading(false);

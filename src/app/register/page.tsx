@@ -80,6 +80,7 @@ function RegisterPageClient() {
   const [turnstileToken, setTurnstileToken] = useState<string | null>(null);
   const [turnstileLoaded, setTurnstileLoaded] = useState(false);
   const [siteConfig, setSiteConfig] = useState<any>(null);
+  const [turnstileWidgetId, setTurnstileWidgetId] = useState<string | null>(null);
 
   const { siteName } = useSite();
 
@@ -133,12 +134,13 @@ function RegisterPageClient() {
 
     const container = document.getElementById('turnstile-container');
     if (container && (window as any).turnstile) {
-      (window as any).turnstile.render('#turnstile-container', {
+      const widgetId = (window as any).turnstile.render('#turnstile-container', {
         sitekey: siteConfig.TurnstileSiteKey,
         callback: (token: string) => {
           setTurnstileToken(token);
         },
       });
+      setTurnstileWidgetId(widgetId);
     }
   }, [turnstileLoaded, siteConfig]);
 
@@ -183,16 +185,29 @@ function RegisterPageClient() {
         // 注册成功，跳转到登录页
         const redirect = searchParams.get('redirect') || '/login';
         router.replace(redirect);
-      } else if (res.status === 400) {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error || '注册失败');
-      } else if (res.status === 409) {
-        setError('用户名已存在');
       } else {
-        const data = await res.json().catch(() => ({}));
-        setError(data.error ?? '服务器错误');
+        // 注册失败，重置Turnstile
+        if (siteConfig?.RegistrationRequireTurnstile && turnstileWidgetId !== null && (window as any).turnstile) {
+          (window as any).turnstile.reset(turnstileWidgetId);
+          setTurnstileToken(null);
+        }
+
+        if (res.status === 400) {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error || '注册失败');
+        } else if (res.status === 409) {
+          setError('用户名已存在');
+        } else {
+          const data = await res.json().catch(() => ({}));
+          setError(data.error ?? '服务器错误');
+        }
       }
     } catch (error) {
+      // 网络错误，重置Turnstile
+      if (siteConfig?.RegistrationRequireTurnstile && turnstileWidgetId !== null && (window as any).turnstile) {
+        (window as any).turnstile.reset(turnstileWidgetId);
+        setTurnstileToken(null);
+      }
       setError('网络错误，请稍后重试');
     } finally {
       setLoading(false);
