@@ -43,6 +43,9 @@ export async function POST(request: NextRequest) {
       DanmakuApiToken,
       TMDBApiKey,
       TMDBProxy,
+      PansouApiUrl,
+      PansouUsername,
+      PansouPassword,
       EnableComments,
       CustomAdFilterCode,
       CustomAdFilterVersion,
@@ -76,6 +79,9 @@ export async function POST(request: NextRequest) {
       DanmakuApiToken: string;
       TMDBApiKey?: string;
       TMDBProxy?: string;
+      PansouApiUrl?: string;
+      PansouUsername?: string;
+      PansouPassword?: string;
       EnableComments: boolean;
       CustomAdFilterCode?: string;
       CustomAdFilterVersion?: number;
@@ -163,6 +169,9 @@ export async function POST(request: NextRequest) {
       DanmakuApiToken,
       TMDBApiKey,
       TMDBProxy,
+      PansouApiUrl,
+      PansouUsername,
+      PansouPassword,
       EnableComments,
       CustomAdFilterCode,
       CustomAdFilterVersion,

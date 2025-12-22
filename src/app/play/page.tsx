@@ -2,7 +2,7 @@
 
 'use client';
 
-import { Heart } from 'lucide-react';
+import { Heart, Search, X } from 'lucide-react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Suspense, useEffect, useRef, useState } from 'react';
 
@@ -48,6 +48,7 @@ import DoubanComments from '@/components/DoubanComments';
 import DanmakuFilterSettings from '@/components/DanmakuFilterSettings';
 import Toast, { ToastProps } from '@/components/Toast';
 import { useEnableComments } from '@/hooks/useEnableComments';
+import PansouSearch from '@/components/PansouSearch';
 
 // 扩展 HTMLVideoElement 类型以支持 hls 属性
 declare global {
@@ -95,6 +96,9 @@ function PlayPageClient() {
 
   // 收藏状态
   const [favorited, setFavorited] = useState(false);
+
+  // 网盘搜索弹窗状态
+  const [showPansouDialog, setShowPansouDialog] = useState(false);
 
   // 跳过片头片尾配置
   const [skipConfig, setSkipConfig] = useState<{
@@ -4890,6 +4894,17 @@ function PlayPageClient() {
                 >
                   <FavoriteIcon filled={favorited} />
                 </button>
+                {/* 网盘搜索按钮 */}
+                <button
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    setShowPansouDialog(true);
+                  }}
+                  className='flex-shrink-0 hover:opacity-80 transition-opacity'
+                  title='搜索网盘资源'
+                >
+                  <Search className='h-6 w-6 text-gray-700 dark:text-gray-300' />
+                </button>
                 {/* 豆瓣评分显示 */}
                 {doubanRating && doubanRating.value > 0 && (
                   <div className='flex items-center gap-2 text-base font-normal'>
@@ -5107,6 +5122,40 @@ function PlayPageClient() {
           });
         }}
       />
+
+      {/* 网盘搜索弹窗 */}
+      {showPansouDialog && (
+        <div
+          className='fixed inset-0 z-[10000] flex items-center justify-center bg-black/50'
+          onClick={() => setShowPansouDialog(false)}
+        >
+          <div
+            className='relative w-full max-w-4xl max-h-[80vh] overflow-y-auto bg-white dark:bg-gray-900 rounded-lg shadow-xl m-4'
+            onClick={(e) => e.stopPropagation()}
+          >
+            {/* 弹窗头部 */}
+            <div className='sticky top-0 z-10 flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900'>
+              <h2 className='text-xl font-bold text-gray-900 dark:text-gray-100'>
+                搜索网盘资源: {detail?.title || ''}
+              </h2>
+              <button
+                onClick={() => setShowPansouDialog(false)}
+                className='p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-lg transition-colors'
+              >
+                <X className='h-5 w-5 text-gray-600 dark:text-gray-400' />
+              </button>
+            </div>
+
+            {/* 弹窗内容 */}
+            <div className='p-4'>
+              <PansouSearch
+                keyword={detail?.title || ''}
+                triggerSearch={showPansouDialog}
+              />
+            </div>
+          </div>
+        </div>
+      )}
     </PageLayout>
   );
 }

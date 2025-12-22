@@ -5105,6 +5105,9 @@ const SiteConfigComponent = ({
     DanmakuApiToken: '87654321',
     TMDBApiKey: '',
     TMDBProxy: '',
+    PansouApiUrl: '',
+    PansouUsername: '',
+    PansouPassword: '',
     EnableComments: false,
     EnableRegistration: false,
     RegistrationRequireTurnstile: false,
@@ -5189,6 +5192,9 @@ const SiteConfigComponent = ({
         DanmakuApiToken: config.SiteConfig.DanmakuApiToken || '87654321',
         TMDBApiKey: config.SiteConfig.TMDBApiKey || '',
         TMDBProxy: config.SiteConfig.TMDBProxy || '',
+        PansouApiUrl: config.SiteConfig.PansouApiUrl || '',
+        PansouUsername: config.SiteConfig.PansouUsername || '',
+        PansouPassword: config.SiteConfig.PansouPassword || '',
         EnableComments: config.SiteConfig.EnableComments || false,
       });
     }
@@ -5775,6 +5781,87 @@ const SiteConfigComponent = ({
           />
           <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
             配置代理服务器地址，用于访问 TMDB API（可选）
+          </p>
+        </div>
+      </div>
+
+      {/* Pansou 配置 */}
+      <div className='space-y-4 pt-4 border-t border-gray-200 dark:border-gray-700'>
+        <h3 className='text-sm font-semibold text-gray-900 dark:text-gray-100'>
+          Pansou 网盘搜索配置
+        </h3>
+
+        {/* Pansou API 地址 */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            Pansou API 地址
+          </label>
+          <input
+            type='text'
+            placeholder='请输入 Pansou API 地址，如：http://localhost:8888'
+            value={siteSettings.PansouApiUrl}
+            onChange={(e) =>
+              setSiteSettings((prev) => ({
+                ...prev,
+                PansouApiUrl: e.target.value,
+              }))
+            }
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+          />
+          <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+            配置 Pansou 服务器地址，用于网盘资源搜索。项目地址：{' '}
+            <a
+              href='https://github.com/fish2018/pansou'
+              target='_blank'
+              rel='noopener noreferrer'
+              className='text-blue-500 hover:text-blue-600 dark:text-blue-400 dark:hover:text-blue-300'
+            >
+              https://github.com/fish2018/pansou
+            </a>
+          </p>
+        </div>
+
+        {/* Pansou 账号 */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            Pansou 账号（可选）
+          </label>
+          <input
+            type='text'
+            placeholder='如果 Pansou 启用了认证，请输入账号'
+            value={siteSettings.PansouUsername}
+            onChange={(e) =>
+              setSiteSettings((prev) => ({
+                ...prev,
+                PansouUsername: e.target.value,
+              }))
+            }
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+          />
+          <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+            如果 Pansou 服务启用了认证功能，需要提供账号密码
+          </p>
+        </div>
+
+        {/* Pansou 密码 */}
+        <div>
+          <label className='block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2'>
+            Pansou 密码（可选）
+          </label>
+          <input
+            type='password'
+            placeholder='如果 Pansou 启用了认证，请输入密码'
+            value={siteSettings.PansouPassword}
+            onChange={(e) =>
+              setSiteSettings((prev) => ({
+                ...prev,
+                PansouPassword: e.target.value,
+              }))
+            }
+            className='w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded-lg bg-white dark:bg-gray-800 text-gray-900 dark:text-gray-100 focus:ring-2 focus:ring-green-500 focus:border-transparent'
+          />
+          <p className='mt-1 text-xs text-gray-500 dark:text-gray-400'>
+            配置账号密码后，系统会自动登录并缓存 Token
           </p>
         </div>
       </div>
