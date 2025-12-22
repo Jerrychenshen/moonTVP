@@ -46,10 +46,6 @@ export async function GET(request: NextRequest) {
     EnableOIDCLogin: config.SiteConfig.EnableOIDCLogin || false,
     EnableOIDCRegistration: config.SiteConfig.EnableOIDCRegistration || false,
     OIDCButtonText: config.SiteConfig.OIDCButtonText || '',
-    SiteConfig: {
-      PansouApiUrl: config.SiteConfig.PansouApiUrl || '',
-      // 不暴露用户名和密码，认证在后端处理
-    },
   };
   return NextResponse.json(result);
 }

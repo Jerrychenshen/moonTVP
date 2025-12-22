@@ -154,7 +154,7 @@ export default function PansouSearch({
     );
   }
 
-  const cloudTypes = Object.keys(results.merged_by_type);
+  const cloudTypes = Object.keys(results.merged_by_type || {});
 
   // 过滤显示的网盘类型
   const filteredCloudTypes = selectedType === 'all'
@@ -164,7 +164,7 @@ export default function PansouSearch({
   // 计算每种网盘类型的数量
   const typeStats = cloudTypes.map(type => ({
     type,
-    count: results.merged_by_type[type]?.length || 0,
+    count: results.merged_by_type?.[type]?.length || 0,
   }));
 
   return (
@@ -208,7 +208,7 @@ export default function PansouSearch({
 
       {/* 按网盘类型分类显示 */}
       {filteredCloudTypes.map((cloudType) => {
-        const links = results.merged_by_type[cloudType];
+        const links = results.merged_by_type?.[cloudType];
         if (!links || links.length === 0) return null;
 
         const typeName = CLOUD_TYPE_NAMES[cloudType] || cloudType;

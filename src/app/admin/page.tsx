@@ -300,6 +300,9 @@ interface SiteConfig {
   DanmakuApiToken: string;
   TMDBApiKey?: string;
   TMDBProxy?: string;
+  PansouApiUrl?: string;
+  PansouUsername?: string;
+  PansouPassword?: string;
   EnableComments: boolean;
   EnableRegistration?: boolean;
   RegistrationRequireTurnstile?: boolean;
